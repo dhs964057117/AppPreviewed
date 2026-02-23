@@ -59,6 +59,16 @@ const EditorCanvas: React.FC = () => {
         }
     }, [background]);
 
+    // Auto-hide guidelines after 1.5 seconds of inactivity
+    useEffect(() => {
+        if (guideLines.length > 0) {
+            const timer = setTimeout(() => {
+                setGuideLines([]);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [guideLines]);
+
     // Responsive scaling to fit stage in container
     useEffect(() => {
         const handleResize = () => {

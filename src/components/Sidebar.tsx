@@ -12,10 +12,11 @@ const Sidebar: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bgFileInputRef = useRef<HTMLInputElement>(null);
     const templateInputRef = useRef<HTMLInputElement>(null);
+    const replaceFileInputRef = useRef<HTMLInputElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
     const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
-    const [cropTarget, setCropTarget] = useState<'element' | 'background'>('element');
+    const [cropTarget, setCropTarget] = useState<'element' | 'background' | 'replace'>('element');
     const [crop, setCrop] = useState<Crop>({ unit: '%', width: 50, height: 50, x: 25, y: 25 });
     const [completedCrop, setCompletedCrop] = useState<any>(null);
 
@@ -95,13 +96,29 @@ const Sidebar: React.FC = () => {
                 zIndex: elements.length,
             };
             addElement(imgEl);
-        } else {
+        } else if (cropTarget === 'replace' && selectedElement) {
+            updateElement(selectedElement.id, { src: base64Image });
+        } else if (cropTarget === 'background') {
             setBackground({ ...background, type: 'image', imageSrc: base64Image });
         }
 
         setCropImageSrc(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
         if (bgFileInputRef.current) bgFileInputRef.current.value = '';
+        if (replaceFileInputRef.current) replaceFileInputRef.current.value = '';
+    };
+
+    const handleReplaceImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target?.result) {
+                    setCropTarget('replace');
+                    setCropImageSrc(event.target.result as string);
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
     };
 
     const handleBgImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,6 +167,10 @@ const Sidebar: React.FC = () => {
                 } catch (err) {
                     alert('Failed to parse template file.');
                 }
+
+                if (templateInputRef.current) {
+                    templateInputRef.current.value = '';
+                }
             };
             reader.readAsText(e.target.files[0]);
         }
@@ -172,6 +193,7 @@ const Sidebar: React.FC = () => {
                                 setCropImageSrc(null);
                                 if (fileInputRef.current) fileInputRef.current.value = '';
                                 if (bgFileInputRef.current) bgFileInputRef.current.value = '';
+                                if (replaceFileInputRef.current) replaceFileInputRef.current.value = '';
                             }}>Cancel</button>
                             <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={handleCropComplete}>Apply Crop</button>
                         </div>
@@ -378,6 +400,16 @@ const Sidebar: React.FC = () => {
 
                         {selectedElement.type === 'image' && (
                             <>
+                                <div>
+                                    <button
+                                        className="btn-ghost"
+                                        style={{ width: '100%', padding: '12px', marginBottom: '16px', border: '1px dashed var(--border-color)', justifyContent: 'center' }}
+                                        onClick={() => replaceFileInputRef.current?.click()}
+                                    >
+                                        <Upload size={16} /> Replace Image
+                                    </button>
+                                    <input type="file" ref={replaceFileInputRef} onChange={handleReplaceImageUpload} accept="image/*" style={{ display: 'none' }} />
+                                </div>
                                 {((selectedElement as ImageElement).frameType || 'none') === 'none' && (
                                     <div>
                                         <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Corner Radius</label>

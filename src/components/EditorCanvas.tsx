@@ -15,8 +15,49 @@ const EditorCanvas: React.FC = () => {
     const { canvasSize, background, elements, selectedIds, setSelectedIds, clearSelection, updateElement, showGrid } = useEditorStore();
     const [scale, setScale] = useState(1);
     const [guideLines, setGuideLines] = useState<{ id: string, points: number[], orientation: 'v' | 'h' }[]>([]);
+    const [gridColor, setGridColor] = useState('rgba(255,255,255,0.15)');
+    const [guideColor, setGuideColor] = useState('#ff0044');
 
     const GUIDELINE_OFFSET = 5;
+
+    // Calculate smart contrast colors based on background
+    useEffect(() => {
+        if (background.type === 'color' && background.color) {
+            const rgb = parseInt(background.color.slice(1), 16);
+            const r = (rgb >> 16) & 0xff;
+            const g = (rgb >> 8) & 0xff;
+            const b = (rgb >> 0) & 0xff;
+            const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            if (luma < 128) {
+                setGridColor('rgba(255,255,255,0.15)');
+                setGuideColor('#ff0044');
+            } else {
+                setGridColor('rgba(0,0,0,0.15)');
+                setGuideColor('#0055ff'); // Blue for light backgrounds
+            }
+        } else if (background.type === 'gradient' && background.gradientColors) {
+            // Check first color for simplicity
+            const rgb = parseInt(background.gradientColors[0].slice(1), 16);
+            const r = (rgb >> 16) & 0xff;
+            const g = (rgb >> 8) & 0xff;
+            const b = (rgb >> 0) & 0xff;
+            const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            if (luma < 128) {
+                setGridColor('rgba(255,255,255,0.15)');
+                setGuideColor('#ff0044');
+            } else {
+                setGridColor('rgba(0,0,0,0.15)');
+                setGuideColor('#0055ff');
+            }
+        } else {
+            // Image background fallback: we can't easily read pixels synchronously in React State, 
+            // so we stick to a high contrast shadow style or default to white grid with red lines.
+            // But since image can be anything, dark lines with white shadow is best, though Konva lines don't do shadows well.
+            // Let's stick to default dark mode styles for images as they are mostly photos.
+            setGridColor('rgba(255,255,255,0.25)');
+            setGuideColor('#ff0044');
+        }
+    }, [background]);
 
     // Responsive scaling to fit stage in container
     useEffect(() => {
@@ -235,7 +276,7 @@ const EditorCanvas: React.FC = () => {
                                     <Line
                                         key={`v-${i}`}
                                         points={[i * 100, 0, i * 100, canvasSize.height]}
-                                        stroke="rgba(255,255,255,0.15)"
+                                        stroke={gridColor}
                                         strokeWidth={1}
                                     />
                                 ))}
@@ -244,7 +285,7 @@ const EditorCanvas: React.FC = () => {
                                     <Line
                                         key={`h-${i}`}
                                         points={[0, i * 100, canvasSize.width, i * 100]}
-                                        stroke="rgba(255,255,255,0.15)"
+                                        stroke={gridColor}
                                         strokeWidth={1}
                                     />
                                 ))}
@@ -257,7 +298,7 @@ const EditorCanvas: React.FC = () => {
                                 key={guide.id}
                                 name="guideline"
                                 points={guide.points}
-                                stroke="#ff0044"
+                                stroke={guideColor}
                                 strokeWidth={5}
                                 dash={[4, 6]}
                             />

@@ -22,8 +22,8 @@ const URLImage: React.FC<{ element: ImageElement, onSelect: () => void, onChange
         };
     }, [element.src]);
 
-    const contentWidth = img ? img.width * element.scaleX : 100;
-    const contentHeight = img ? img.height * element.scaleY : 100;
+    const contentWidth = img ? img.width : 100;
+    const contentHeight = img ? img.height : 100;
 
     // Proportional dimensions for realistic phone mockups with adjustable thickness
     const thicknessMultiplier = typeof element.frameThickness === 'number' ? element.frameThickness : 1;
@@ -104,8 +104,8 @@ const URLImage: React.FC<{ element: ImageElement, onSelect: () => void, onChange
             ref={shapeRef}
             x={element.x}
             y={element.y}
-            scaleX={element.frameType && element.frameType !== 'none' ? 1 : element.scaleX}
-            scaleY={element.frameType && element.frameType !== 'none' ? 1 : element.scaleY}
+            scaleX={element.scaleX}
+            scaleY={element.scaleY}
             rotation={element.rotation}
             draggable
             onClick={onSelect}

@@ -15,6 +15,7 @@ const Sidebar: React.FC = () => {
     const imgRef = useRef<HTMLImageElement>(null);
 
     const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+    const [cropTarget, setCropTarget] = useState<'element' | 'background'>('element');
     const [crop, setCrop] = useState<Crop>({ unit: '%', width: 50, height: 50, x: 25, y: 25 });
     const [completedCrop, setCompletedCrop] = useState<any>(null);
 
@@ -46,6 +47,7 @@ const Sidebar: React.FC = () => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 if (event.target?.result) {
+                    setCropTarget('element');
                     setCropImageSrc(event.target.result as string);
                 }
             };
@@ -77,34 +79,41 @@ const Sidebar: React.FC = () => {
         );
 
         const base64Image = canvas.toDataURL('image/png');
-        const imgEl: ImageElement = {
-            id: uuidv4(),
-            type: 'image',
-            name: 'Cropped Image',
-            src: base64Image,
-            x: 50,
-            y: 50,
-            rotation: 0,
-            scaleX: 1,
-            scaleY: 1,
-            cornerRadius: 0,
-            zIndex: elements.length,
-        };
-        addElement(imgEl);
+
+        if (cropTarget === 'element') {
+            const imgEl: ImageElement = {
+                id: uuidv4(),
+                type: 'image',
+                name: 'Cropped Image',
+                src: base64Image,
+                x: 50,
+                y: 50,
+                rotation: 0,
+                scaleX: 1,
+                scaleY: 1,
+                cornerRadius: 0,
+                zIndex: elements.length,
+            };
+            addElement(imgEl);
+        } else {
+            setBackground({ ...background, type: 'image', imageSrc: base64Image });
+        }
+
         setCropImageSrc(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
+        if (bgFileInputRef.current) bgFileInputRef.current.value = '';
     };
 
     const handleBgImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const reader = new FileReader();
-            const file = e.target.files[0];
             reader.onload = (event) => {
                 if (event.target?.result) {
-                    setBackground({ ...background, type: 'image', imageSrc: event.target.result as string });
+                    setCropTarget('background');
+                    setCropImageSrc(event.target.result as string);
                 }
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(e.target.files[0]);
         }
     };
 
@@ -159,7 +168,11 @@ const Sidebar: React.FC = () => {
                             </ReactCrop>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-                            <button className="btn-ghost" onClick={() => { setCropImageSrc(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}>Cancel</button>
+                            <button className="btn-ghost" onClick={() => {
+                                setCropImageSrc(null);
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                                if (bgFileInputRef.current) bgFileInputRef.current.value = '';
+                            }}>Cancel</button>
                             <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={handleCropComplete}>Apply Crop</button>
                         </div>
                     </div>

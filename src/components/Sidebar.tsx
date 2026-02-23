@@ -5,9 +5,11 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { useEditorStore } from '../store/EditorContext';
 import { v4 as uuidv4 } from 'uuid';
 import type { TextElement, ImageElement } from '../types';
+import { i18n } from '../utils/i18n';
 
 const Sidebar: React.FC = () => {
-    const { elements, selectedIds, background, setBackground, clearSelection, updateElement, addElement, removeElement, showGrid, setShowGrid, setElements, canvasSize, setCanvasSize } = useEditorStore();
+    const { elements, selectedIds, background, setBackground, clearSelection, updateElement, addElement, removeElement, showGrid, setShowGrid, setElements, canvasSize, setCanvasSize, language } = useEditorStore();
+    const t = i18n[language];
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bgFileInputRef = useRef<HTMLInputElement>(null);
@@ -182,7 +184,7 @@ const Sidebar: React.FC = () => {
             {cropImageSrc && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '8px', maxWidth: '80%', maxHeight: '80%', display: 'flex', flexDirection: 'column' }}>
-                        <h3 style={{ marginTop: 0, color: 'white' }}>Crop Image</h3>
+                        <h3 style={{ marginTop: 0, color: 'white' }}>{t.crop_image}</h3>
                         <div style={{ overflow: 'auto', flex: 1 }}>
                             <ReactCrop crop={crop} onChange={c => setCrop(c)} onComplete={c => setCompletedCrop(c)}>
                                 <img ref={imgRef} src={cropImageSrc} style={{ maxHeight: '60vh' }} />
@@ -194,8 +196,8 @@ const Sidebar: React.FC = () => {
                                 if (fileInputRef.current) fileInputRef.current.value = '';
                                 if (bgFileInputRef.current) bgFileInputRef.current.value = '';
                                 if (replaceFileInputRef.current) replaceFileInputRef.current.value = '';
-                            }}>Cancel</button>
-                            <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={handleCropComplete}>Apply Crop</button>
+                            }}>{t.cancel}</button>
+                            <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={handleCropComplete}>{t.apply_crop}</button>
                         </div>
                     </div>
                 </div>
@@ -204,32 +206,32 @@ const Sidebar: React.FC = () => {
             {/* Tools Section */}
             <div style={{ padding: '24px', borderBottom: '1px solid var(--border-color)' }}>
                 <h2 style={{ margin: '0 0 16px 0', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
-                    Tools & Workspace
+                    {t.tools_workspace}
                 </h2>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
                     <button className="btn-ghost" onClick={() => setShowGrid(!showGrid)} style={{ padding: '12px 8px', color: showGrid ? 'var(--primary)' : 'white', background: showGrid ? 'rgba(56, 189, 248, 0.1)' : 'transparent', border: `1px solid ${showGrid ? 'var(--primary)' : 'transparent'}` }}>
                         <Grid3X3 size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                        {showGrid ? 'Hide Grid' : 'Show Grid'}
+                        {showGrid ? t.hide_grid : t.show_grid}
                     </button>
                     <button className="btn-ghost" onClick={() => templateInputRef.current?.click()} style={{ padding: '12px 8px' }}>
                         <Upload size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                        Load Template
+                        {t.load_template}
                     </button>
                     <input type="file" ref={templateInputRef} onChange={handleImportTemplate} accept=".json" style={{ display: 'none' }} />
                 </div>
 
                 <h2 style={{ margin: '0 0 16px 0', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
-                    Insert Layer
+                    {t.add_headline.split(' ')[0]} {/* Abbreviate for grid layout */}
                 </h2>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <button className="btn-ghost" onClick={handleAddText} style={{ flexDirection: 'column', padding: '16px 8px', gap: '8px' }}>
                         <Type size={20} color="var(--primary)" />
-                        Text
+                        {language === 'zh' ? '文字' : 'Text'}
                     </button>
                     <button className="btn-ghost" onClick={() => fileInputRef.current?.click()} style={{ flexDirection: 'column', padding: '16px 8px', gap: '8px' }}>
                         <ImageIcon size={20} color="var(--primary)" />
-                        Image
+                        {language === 'zh' ? '图片' : 'Image'}
                     </button>
                     <input
                         type="file"
@@ -244,27 +246,27 @@ const Sidebar: React.FC = () => {
             {/* Properties Section */}
             <div style={{ padding: '24px', flex: 1, overflowY: 'auto' }}>
                 <h2 style={{ margin: '0 0 16px 0', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
-                    Properties
+                    {selectedElement ? t.properties : t.canvas_settings}
                 </h2>
 
                 {!selectedElement ? (
                     // Canvas Properties
                     <div>
                         <div style={{ marginBottom: '16px' }}>
-                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Background Type</label>
+                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.background_type}</label>
                             <select
                                 value={background.type}
                                 onChange={e => setBackground({ ...background, type: e.target.value as any })}
                                 style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '8px', borderRadius: '4px', marginBottom: '16px' }}
                             >
-                                <option value="color">Solid Color</option>
-                                <option value="gradient">Gradient</option>
-                                <option value="image">Image</option>
+                                <option value="color">{t.solid_color}</option>
+                                <option value="gradient">{t.gradient}</option>
+                                <option value="image">{t.image}</option>
                             </select>
 
                             {background.type === 'color' && (
                                 <>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Color</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.color}</label>
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <input
                                             type="color"
@@ -284,7 +286,7 @@ const Sidebar: React.FC = () => {
 
                             {background.type === 'gradient' && (
                                 <>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Gradient Colors</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.gradient_colors}</label>
                                     <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                                         <input type="color" value={background.gradientColors?.[0] || '#ff0000'} onChange={e => setBackground({ ...background, gradientColors: [e.target.value, background.gradientColors?.[1] || '#0000ff'] })} style={{ width: '40px', height: '40px', padding: 0, border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }} />
                                         <input type="text" value={background.gradientColors?.[0] || '#ff0000'} onChange={e => setBackground({ ...background, gradientColors: [e.target.value, background.gradientColors?.[1] || '#0000ff'] })} style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '0 8px', borderRadius: '4px', fontFamily: 'monospace' }} />
@@ -293,10 +295,10 @@ const Sidebar: React.FC = () => {
                                         <input type="color" value={background.gradientColors?.[1] || '#0000ff'} onChange={e => setBackground({ ...background, gradientColors: [background.gradientColors?.[0] || '#ff0000', e.target.value] })} style={{ width: '40px', height: '40px', padding: 0, border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }} />
                                         <input type="text" value={background.gradientColors?.[1] || '#0000ff'} onChange={e => setBackground({ ...background, gradientColors: [background.gradientColors?.[0] || '#ff0000', e.target.value] })} style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '0 8px', borderRadius: '4px', fontFamily: 'monospace' }} />
                                     </div>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Direction</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.direction}</label>
                                     <select value={background.gradientDirection || 'vertical'} onChange={e => setBackground({ ...background, gradientDirection: e.target.value as any })} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '8px', borderRadius: '4px' }}>
-                                        <option value="vertical">Vertical</option>
-                                        <option value="horizontal">Horizontal</option>
+                                        <option value="vertical">{t.vertical}</option>
+                                        <option value="horizontal">{t.horizontal}</option>
                                     </select>
                                 </>
                             )}
@@ -304,7 +306,7 @@ const Sidebar: React.FC = () => {
                             {background.type === 'image' && (
                                 <>
                                     <button className="btn-primary" onClick={() => bgFileInputRef.current?.click()} style={{ width: '100%', padding: '12px', marginTop: '8px' }}>
-                                        Upload Background Image
+                                        {t.upload_background}
                                     </button>
                                     <input type="file" ref={bgFileInputRef} onChange={handleBgImageUpload} accept="image/*" style={{ display: 'none' }} />
                                 </>
@@ -313,13 +315,10 @@ const Sidebar: React.FC = () => {
 
                         <div style={{ marginTop: '32px', borderTop: '1px solid var(--border-color)', paddingTop: '24px' }}>
                             <h2 style={{ margin: '0 0 16px 0', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
-                                Project Data
+                                {t.project_data}
                             </h2>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: '1.5' }}>
-                                Save your entire workspace layout, including all uploaded images, settings, and layer configurations as a reusable Template JSON file.
-                            </p>
                             <button className="btn-primary" onClick={handleExportTemplate} style={{ width: '100%', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                <Download size={16} /> Save as Template
+                                <Download size={16} /> {t.save_template}
                             </button>
                         </div>
                     </div>
@@ -329,7 +328,7 @@ const Sidebar: React.FC = () => {
                         {selectedElement.type === 'text' && (
                             <>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Text Content</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.text_content}</label>
                                     <textarea
                                         value={(selectedElement as TextElement).text}
                                         onChange={e => updateElement(selectedElement.id, { text: e.target.value })}
@@ -337,14 +336,14 @@ const Sidebar: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Fill Type</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.fill_type}</label>
                                     <select
                                         value={(selectedElement as TextElement).fillType || 'color'}
                                         onChange={e => updateElement(selectedElement.id, { fillType: e.target.value as any })}
                                         style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '8px', borderRadius: '4px', marginBottom: '16px' }}
                                     >
-                                        <option value="color">Solid Color</option>
-                                        <option value="gradient">Gradient</option>
+                                        <option value="color">{t.solid_color}</option>
+                                        <option value="gradient">{t.gradient}</option>
                                     </select>
 
                                     {(!((selectedElement as TextElement).fillType) || (selectedElement as TextElement).fillType === 'color') && (
@@ -369,7 +368,7 @@ const Sidebar: React.FC = () => {
 
                                     {((selectedElement as TextElement).fillType === 'gradient') && (
                                         <>
-                                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Gradient Colors</label>
+                                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.gradient_colors}</label>
                                             <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                                                 <input type="color" value={(selectedElement as TextElement).gradientColors?.[0] || '#ff0000'} onChange={e => updateElement(selectedElement.id, { gradientColors: [e.target.value, (selectedElement as TextElement).gradientColors?.[1] || '#0000ff'] })} style={{ width: '40px', height: '40px', padding: 0, border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }} />
                                                 <input type="text" value={(selectedElement as TextElement).gradientColors?.[0] || '#ff0000'} onChange={e => updateElement(selectedElement.id, { gradientColors: [e.target.value, (selectedElement as TextElement).gradientColors?.[1] || '#0000ff'] })} style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '0 8px', borderRadius: '4px', fontFamily: 'monospace' }} />
@@ -378,16 +377,16 @@ const Sidebar: React.FC = () => {
                                                 <input type="color" value={(selectedElement as TextElement).gradientColors?.[1] || '#0000ff'} onChange={e => updateElement(selectedElement.id, { gradientColors: [(selectedElement as TextElement).gradientColors?.[0] || '#ff0000', e.target.value] })} style={{ width: '40px', height: '40px', padding: 0, border: 'none', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }} />
                                                 <input type="text" value={(selectedElement as TextElement).gradientColors?.[1] || '#0000ff'} onChange={e => updateElement(selectedElement.id, { gradientColors: [(selectedElement as TextElement).gradientColors?.[0] || '#ff0000', e.target.value] })} style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '0 8px', borderRadius: '4px', fontFamily: 'monospace' }} />
                                             </div>
-                                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Direction</label>
+                                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.direction}</label>
                                             <select value={(selectedElement as TextElement).gradientDirection || 'vertical'} onChange={e => updateElement(selectedElement.id, { gradientDirection: e.target.value as any })} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '8px', borderRadius: '4px' }}>
-                                                <option value="vertical">Vertical</option>
-                                                <option value="horizontal">Horizontal</option>
+                                                <option value="vertical">{t.vertical}</option>
+                                                <option value="horizontal">{t.horizontal}</option>
                                             </select>
                                         </>
                                     )}
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Font Size</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.font_size}</label>
                                     <input
                                         type="number"
                                         value={(selectedElement as TextElement).fontSize}
@@ -406,13 +405,13 @@ const Sidebar: React.FC = () => {
                                         style={{ width: '100%', padding: '12px', marginBottom: '16px', border: '1px dashed var(--border-color)', justifyContent: 'center' }}
                                         onClick={() => replaceFileInputRef.current?.click()}
                                     >
-                                        <Upload size={16} /> Replace Image
+                                        <Upload size={16} /> {t.replace_image}
                                     </button>
                                     <input type="file" ref={replaceFileInputRef} onChange={handleReplaceImageUpload} accept="image/*" style={{ display: 'none' }} />
                                 </div>
                                 {((selectedElement as ImageElement).frameType || 'none') === 'none' && (
                                     <div>
-                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Corner Radius</label>
+                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.corner_radius}</label>
                                         <input
                                             type="number"
                                             min="0"
@@ -423,22 +422,22 @@ const Sidebar: React.FC = () => {
                                     </div>
                                 )}
                                 <div>
-                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Device Frame</label>
+                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>{t.device_frame}</label>
                                     <select
                                         value={(selectedElement as ImageElement).frameType || 'none'}
                                         onChange={e => updateElement(selectedElement.id, { frameType: e.target.value as any })}
                                         style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'white', padding: '8px', borderRadius: '4px', marginBottom: '16px' }}
                                     >
-                                        <option value="none">None</option>
-                                        <option value="iphone">iPhone Mockup</option>
-                                        <option value="pixel">Pixel Mockup</option>
+                                        <option value="none">{t.none}</option>
+                                        <option value="iphone">{t.iphone_mockup}</option>
+                                        <option value="pixel">{t.pixel_mockup}</option>
                                     </select>
                                 </div>
                                 {((selectedElement as ImageElement).frameType || 'none') !== 'none' && (
                                     <>
                                         <div>
                                             <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                                                <span>Frame Thickness</span>
+                                                <span>{t.frame_thickness}</span>
                                                 <span style={{ color: 'white', fontFamily: 'monospace' }}>{(selectedElement as ImageElement).frameThickness ?? 1}x</span>
                                             </label>
                                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px' }}>

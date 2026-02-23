@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { PRESET_SIZES } from '../types';
 import type { CanvasElement, BackgroundConfig, PresetSize } from '../types';
+import type { Language } from '../utils/i18n';
+import presetTemplate from '../../store-promo-template-1771840515058.json';
 
 interface EditorContextProps {
     elements: CanvasElement[];
@@ -14,6 +16,8 @@ interface EditorContextProps {
     setBackground: React.Dispatch<React.SetStateAction<BackgroundConfig>>;
     showGrid: boolean;
     setShowGrid: React.Dispatch<React.SetStateAction<boolean>>;
+    language: Language;
+    setLanguage: React.Dispatch<React.SetStateAction<Language>>;
 
     // Helpers
     addElement: (el: CanvasElement) => void;
@@ -30,6 +34,21 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [canvasSize, setCanvasSize] = useState<PresetSize>(PRESET_SIZES[0]); // Default iPhone 6.7
     const [background, setBackground] = useState<BackgroundConfig>({ type: 'color', color: '#1e293b' });
     const [showGrid, setShowGrid] = useState<boolean>(false);
+    const [language, setLanguage] = useState<Language>('zh'); // Defaulting to Chinese as requested
+
+    useEffect(() => {
+        // Load default preset template
+        try {
+            const preset: any = presetTemplate;
+            if (preset && preset.elements) {
+                setCanvasSize(preset.canvasSize);
+                setBackground(preset.background as BackgroundConfig);
+                setElements(preset.elements as CanvasElement[]);
+            }
+        } catch (e) {
+            console.error("Failed to load preset template:", e);
+        }
+    }, []);
 
     const addElement = (el: CanvasElement) => {
         setElements(prev => [...prev, el]);
@@ -55,6 +74,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         canvasSize, setCanvasSize,
         background, setBackground,
         showGrid, setShowGrid,
+        language, setLanguage,
         addElement, updateElement, removeElement, clearSelection
     };
 

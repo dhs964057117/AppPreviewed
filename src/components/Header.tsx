@@ -1,10 +1,12 @@
 import React from 'react';
-import { Download, MonitorSmartphone } from 'lucide-react';
+import { Download, MonitorSmartphone, Globe } from 'lucide-react';
 import { useEditorStore } from '../store/EditorContext';
 import { PRESET_SIZES } from '../types';
+import { i18n } from '../utils/i18n';
 
 const Header: React.FC = () => {
-    const { canvasSize, setCanvasSize, clearSelection } = useEditorStore();
+    const { canvasSize, setCanvasSize, clearSelection, language, setLanguage } = useEditorStore();
+    const t = i18n[language];
 
     const [exportFormat, setExportFormat] = React.useState<'jpeg' | 'png'>('jpeg');
 
@@ -69,9 +71,32 @@ const Header: React.FC = () => {
                     <option value="png">PNG</option>
                 </select>
 
+                <button
+                    className="glass-panel"
+                    style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        color: 'white',
+                        background: 'var(--bg-sidebar)',
+                        border: '1px solid var(--border-color)',
+                        outline: 'none',
+                        fontFamily: 'var(--font-sans)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                    }}
+                    onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
+                >
+                    <Globe size={18} />
+                    {language === 'en' ? 'EN' : '中文'}
+                </button>
+
+                <div style={{ width: '1px', height: '24px', background: 'var(--border-color)', margin: '0 8px' }}></div>
+
                 <button className="btn-primary" onClick={handleExport}>
                     <Download size={18} />
-                    Export Image
+                    {t.export_image}
                 </button>
             </div>
         </header>

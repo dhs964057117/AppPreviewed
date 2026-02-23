@@ -12,6 +12,8 @@ interface EditorContextProps {
     setCanvasSize: React.Dispatch<React.SetStateAction<PresetSize>>;
     background: BackgroundConfig;
     setBackground: React.Dispatch<React.SetStateAction<BackgroundConfig>>;
+    showGrid: boolean;
+    setShowGrid: React.Dispatch<React.SetStateAction<boolean>>;
 
     // Helpers
     addElement: (el: CanvasElement) => void;
@@ -27,6 +29,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [canvasSize, setCanvasSize] = useState<PresetSize>(PRESET_SIZES[0]); // Default iPhone 6.7
     const [background, setBackground] = useState<BackgroundConfig>({ type: 'color', color: '#1e293b' });
+    const [showGrid, setShowGrid] = useState<boolean>(false);
 
     const addElement = (el: CanvasElement) => {
         setElements(prev => [...prev, el]);
@@ -51,6 +54,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         selectedIds, setSelectedIds,
         canvasSize, setCanvasSize,
         background, setBackground,
+        showGrid, setShowGrid,
         addElement, updateElement, removeElement, clearSelection
     };
 

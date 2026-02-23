@@ -18,6 +18,9 @@ export interface TextElement extends BaseElement {
   fontSize: number;
   fontFamily: string;
   fill: string;
+  fillType?: 'color' | 'gradient';
+  gradientColors?: [string, string];
+  gradientDirection?: 'vertical' | 'horizontal';
   align: 'left' | 'center' | 'right';
   fontStyle: 'normal' | 'italic' | 'bold' | 'italic bold';
 }
@@ -26,6 +29,10 @@ export interface ImageElement extends BaseElement {
   type: 'image';
   src: string; // The data url or blob url
   cornerRadius: number;
+  frameType?: 'none' | 'iphone' | 'pixel';
+  frameColor?: string;
+  frameThickness?: number;
+  cameraCutout?: 'none' | 'notch' | 'island' | 'punchHole';
 }
 
 export type CanvasElement = TextElement | ImageElement;

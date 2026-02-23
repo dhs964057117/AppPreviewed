@@ -6,12 +6,14 @@ import { PRESET_SIZES } from '../types';
 const Header: React.FC = () => {
     const { canvasSize, setCanvasSize, clearSelection } = useEditorStore();
 
+    const [exportFormat, setExportFormat] = React.useState<'jpeg' | 'png'>('jpeg');
+
     const handleExport = () => {
         // Clear selection so bounding boxes aren't in the export
         clearSelection();
         // Small delay to ensure React state has cleared the transformer before rendering
         setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('export-canvas'));
+            window.dispatchEvent(new CustomEvent('export-canvas', { detail: { format: exportFormat } }));
         }, 100);
     };
 
@@ -47,6 +49,24 @@ const Header: React.FC = () => {
                             {size.name}
                         </option>
                     ))}
+                </select>
+
+                <select
+                    className="glass-panel"
+                    style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        color: 'white',
+                        background: 'var(--bg-sidebar)',
+                        border: '1px solid var(--border-color)',
+                        outline: 'none',
+                        fontFamily: 'var(--font-sans)'
+                    }}
+                    value={exportFormat}
+                    onChange={(e) => setExportFormat(e.target.value as 'jpeg' | 'png')}
+                >
+                    <option value="jpeg">JPG</option>
+                    <option value="png">PNG</option>
                 </select>
 
                 <button className="btn-primary" onClick={handleExport}>

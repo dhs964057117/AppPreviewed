@@ -1,0 +1,9 @@
+# * 允许所有搜索引擎爬虫访问
+User-agent: *
+Allow: /
+
+# Host
+Host: https://preview.suansuan.dpdns.org/
+
+# Sitemaps 指向站点地图位置
+Sitemap: https://preview.suansuan.dpdns.org/sitemap.xml

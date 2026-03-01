@@ -1,73 +1,65 @@
-# React + TypeScript + Vite
+# AppPreviewed
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🌍 [*Read this in Chinese / 中文说明*](https://github.com/dhs964057117/AppPreviewed/blob/main/README-zh.md)
 
-Currently, two official plugins are available:
+**AppPreviewed** is a fast, lightweight, and powerful web application designed to help developers and designers create stunning App Store and Google Play screenshots and mockups with ease. Built with modern web technologies, it offers a seamless editing experience right in your browser.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img src="./public/preview.png" style="zoom:25%; display: block; margin-left: auto; margin-right: auto;" />
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Intuitive Canvas Editor**: Easily drag, drop, and edit elements to create your perfect app screenshots.
 
-## Expanding the ESLint configuration
+* **Multiple Platform Support**: Generate device mockups tailored for both Apple App Store and Google Play Store dimensions.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **Customizable Templates**: Pre-built layouts to get you started quickly.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* **Export to High Quality**: Download your mockups in high-resolution PNG/JPEG formats ready for store submission.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **SEO & AdSense Ready**: Pre-configured with meta tags, sitemaps, and AdSense integration for easy monetization and discovery.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **Modern Tech Stack**: Powered by React, Vite, and styled with modern CSS frameworks.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Local Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Clone the repository:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+   ```bash
+   git clone [https://github.com/yourusername/AppPreviewed.git](https://github.com/yourusername/AppPreviewed.git)
+   cd AppPreviewed
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+## 🚀 How to Deploy on Cloudflare Pages
+
+Deploying AppPreviewed to Cloudflare Pages is incredibly simple and highly recommended for global edge performance.
+
+1. Push your code to GitHub: Make sure your AppPreviewed code is pushed to a GitHub repository.
+
+2. Log into Cloudflare: Go to your Cloudflare Dashboard and navigate to Workers & Pages.
+
+3. Create a new Page: Click on Create application -> Pages -> Connect to Git.
+
+4. Select Repository: Authorize your GitHub account and select your AppPreviewed repository.
+
+5. Configure Build Settings:
+  * Framework preset: Select Vite
+  * Build command: npm run build
+  * Build output directory: dist
+
+6. Deploy: Click Save and Deploy. Cloudflare will automatically build and deploy your site, providing you with a live URL!
+
+## 🎁 Also Check Out: SnapSaver
+
+Looking for more awesome tools? Check out my other application currently available on Google Play!
+
+* 🌐 **[SnapSaver Official Website](https://snapsaver.suansuan.dpdns.org/)**
+* 📱 **[Get it on Google Play](https://play.google.com/store/apps/details?id=com.awesome.dhs.tools.snapsave)**
+
+---

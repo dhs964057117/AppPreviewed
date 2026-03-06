@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://preview.suansuan.dpdns.org/
+Host: https://preview.suanss.com/
 
 # Sitemaps 指向站点地图位置
-Sitemap: https://preview.suansuan.dpdns.org/sitemap.xml
+Sitemap: https://preview.suanss.com/sitemap.xml

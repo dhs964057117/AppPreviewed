@@ -59,7 +59,7 @@ Deploying AppPreviewed to Cloudflare Pages is incredibly simple and highly recom
 
 Looking for more awesome tools? Check out my other application currently available on Google Play!
 
-* 🌐 **[SnapSaver Official Website](https://snapsaver.suansuan.dpdns.org/)**
+* 🌐 **[SnapSaver Official Website](https://snapsaver.suanss.com/)**
 * 📱 **[Get it on Google Play](https://play.google.com/store/apps/details?id=com.awesome.dhs.tools.snapsave)**
 
 ---
